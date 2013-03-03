@@ -8,17 +8,17 @@ class blinkBehavior(behavior):
         self.sleepDelay = 1 / frequency            
 
     def takeControl(self):
+	result = False
         with pins.pin(7, direction=In) as pin:
-            if pin.value == 1 return True
-        return False
+            if pin.value == 1:
+		 result = True
+        return result
 
     def run(self):
-        print("Starting to blink...")
-        self.isRunning = True
+        print("Starting to blink...")        
         inPin = pins.pin(7, direction=In)
         outPin = pins.pin(0, direction=Out)
         with inPin, outPin:
-            while inPin == True && self.shouldStop == False:
-                pin.value = pin.value - 1
+            while inPin.value == True and self.shouldStop == False:
+                outPin.value = outPin.value - 1
                 sleep(self.sleepDelay)
-            self.isRunning = False

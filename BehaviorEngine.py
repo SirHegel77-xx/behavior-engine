@@ -14,7 +14,7 @@ class behaviorEngine(threading.Thread):
         self.isRunning = True
         while self.shouldStop == False:
             if self.currentBehavior != None:
-                if self.currentBehavior.isWorking == False:
+                if self.currentBehavior.isRunning() == False:
                     self.currentBehavior = None
             for b in self.behaviors:
                 if self.currentBehavior != b:
@@ -22,6 +22,7 @@ class behaviorEngine(threading.Thread):
                         self.stopCurrent()
                         self.currentBehavior = b                        
                         b.startWork()
+                        break
         self.stopCurrent()
         self.isRunning = False
 
@@ -29,7 +30,7 @@ class behaviorEngine(threading.Thread):
         if self.currentBehavior != None:
             print("Stopping current behavior...")
             self.currentBehavior.stopWork()
-            while self.currentBehavior.isRunning:
+            while self.currentBehavior.isRunning() == True:
                 sleep(0.1)
         
         

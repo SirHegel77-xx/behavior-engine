@@ -1,24 +1,32 @@
-import threading
+from threading import *
 from time import sleep
 from BehaviorEngine import *
 import signal
 
-class behavior(threading.Thread):
-    def __init__(self, engine):
-        threading.Thread.__init__(self)
+class behavior:
+    def __init__(self, engine):        
         self.shouldStop = False;
-        self.isRunning = False;
         self.engine = engine
+
+    def isRunning(self):
+        if self.thread != None:
+            if self.thread.is_alive():
+                return True
+        return False
         
     def takeControl(self):
         return False;
 
     def startWork(self):
         print(self.typeName() + " starting work")        
-        self.start()        
-        
+        self.thread = Thread(target = self.run)
+        self.thread.start()
+
     def stopWork(self):
         self.shouldStop = True
+	self.thread.join()
+        self.thread = None	
+        self.shouldStop = False
 
     def typeName(self):
         return self.__class__.__name__
@@ -29,14 +37,14 @@ class idleBehavior(behavior):
         behavior.__init__(self, engine)        
             
     def takeControl(self):
-        return True;
+        if self.engine.currentBehavior == None:
+            return True
+        return False
 
     def run(self):
-        self.isRunning = True
         print("Starting to idle...")
         while self.shouldStop == False:            
-            sleep(self.sleepDelay)
-        self.isRunning = False        
+            sleep(0.1)
         
 
 
