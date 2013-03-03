@@ -13,8 +13,9 @@ class behaviorEngine(threading.Thread):
         print("Starting work...")
         self.isRunning = True
         while self.shouldStop == False:
-            if self.currentBehavior.isWorking == False:
-                self.currentBehavior = None
+            if self.currentBehavior != None:
+                if self.currentBehavior.isWorking == False:
+                    self.currentBehavior = None
             for b in self.behaviors:
                 if self.currentBehavior != b:
                     if b.takeControl():
