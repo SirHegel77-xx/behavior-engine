@@ -4,7 +4,7 @@ from BlinkBehavior import *
 class myBehaviorEngine(behaviorEngine):
     def __init__(self):
         behaviorEngine.__init__(self)
-        self.behaviors.append(blinkBehavior(1))
+        self.behaviors.append(blinkBehavior(self, 1))
 
 def main():
     be = myBehaviorEngine()

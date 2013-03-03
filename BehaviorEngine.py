@@ -1,23 +1,32 @@
-from Behavior import *
-
-
-class main:
-    def main(self):
-        print("Starting engine...")
-        self.be = behaviorEngine()
-        self.be.start()
-        try:
-            while True:
-                sleep(1)
-        except KeyboardInterrupt:
-            self.be.stop()
-            while self.be.isRunning == True:
-                print("Waiting for the engine to stop...")
-                sleep(1)
-            print("Engine stopped")
-            
-
+class behaviorEngine(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.behaviors = []
+        self.currentBehavior = None
+        self.shouldStop = False
+        self.isRunning = False
         
+    def run(self):
+        print("Starting work...")
+        self.isRunning = True
+        while self.shouldStop == False:
+            for b in self.behaviors:
+                if self.currentBehavior != b:
+                    if b.takeControl():
+                        self.stopCurrent()
+                        self.currentBehavior = b                        
+                        b.startWork()
+        self.stopCurrent()
+        self.isRunning = False
 
-m = main()
-m.main()
+    def stopCurrent(self):        
+        if self.currentBehavior != None:
+            print("Stopping current behavior...")
+            self.currentBehavior.stopWork()
+            while self.currentBehavior.isRunning:
+                sleep(0.1)
+        
+        
+    def stop(self):
+        print("Stopping work...")
+        self.shouldStop = True

@@ -3,8 +3,8 @@ from quick2wire.gpio import pins, Out
 
 
 class blinkBehavior(behavior):
-    def __init__(self, frequency):
-        behavior.__init__(self)
+    def __init__(self, engine, frequency):
+        behavior.__init__(self, engine)
         self.sleepDelay = 1 / frequency            
 
     def takeControl(self):

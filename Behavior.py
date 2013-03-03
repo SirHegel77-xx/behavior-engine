@@ -1,12 +1,14 @@
 import threading
 from time import sleep
+from BehaviorEngine import *
 import signal
 
 class behavior(threading.Thread):
-    def __init__(self):
+    def __init__(self, engine):
         threading.Thread.__init__(self)
         self.shouldStop = False;
         self.isRunning = False;
+        self.engine = engine
         
     def takeControl(self):
         return False;
@@ -22,9 +24,9 @@ class behavior(threading.Thread):
         return self.__class__.__name__
 
 
-class echoBehavior(behavior):
-    def __init__(self, frequency):
-        behavior.__init__(self)
+class echoBehavior(behavior, engine):
+    def __init__(self, engine, frequency):
+        behavior.__init__(self, engine)
         self.sleepDelay = 1 / frequency
             
     def takeControl(self):
@@ -36,40 +38,6 @@ class echoBehavior(behavior):
             print("Blink!")
             sleep(self.sleepDelay)
         self.isRunning = False
-
-
-class behaviorEngine(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.behaviors = []
-        self.currentBehavior = None
-        self.shouldStop = False
-        self.isRunning = False
-        
-    def run(self):
-        print("Starting work...")
-        self.isRunning = True
-        while self.shouldStop == False:
-            for b in self.behaviors:
-                if self.currentBehavior != b:
-                    if b.takeControl():
-                        self.stopCurrent()
-                        self.currentBehavior = b                        
-                        b.startWork()
-        self.stopCurrent()
-        self.isRunning = False
-
-    def stopCurrent(self):        
-        if self.currentBehavior != None:
-            print("Stopping current behavior...")
-            self.currentBehavior.stopWork()
-            while self.currentBehavior.isRunning:
-                sleep(0.1)
-        
-        
-    def stop(self):
-        print("Stopping work...")
-        self.shouldStop = True
         
 
 
