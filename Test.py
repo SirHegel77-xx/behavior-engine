@@ -20,9 +20,9 @@ class MyBehavior(BlinkBehavior):
         if isinstance(self.engine().current_behavior(), IdleBehavior):
             with pins.pin(7, direction=In) as pin:
                 if pin.value == 0:
-                    self.can_take_control = True #to detect rising edge
-                elif self.can_take_control == True and pin.value == 1:
-                    self.can_take_control = False
+                    self._can_take_control = True #to detect rising edge
+                elif self._can_take_control == True and pin.value == 1:
+                    self._can_take_control = False
                     result = True
         return result
 
@@ -34,10 +34,10 @@ class MyBehavior(BlinkBehavior):
             return True
         with pins.pin(7, direction=In) as pin:
             if pin.value == 0:
-                self.can_stop = True #to detect rising edge
-            elif self.can_stop == True and pin.value == 1:
+                self._can_stop = True #to detect rising edge
+            elif self._can_stop == True and pin.value == 1:
                 result = True
-                self.can_stop == False
+                self._can_stop == False
         return result
 
 # Custom behavior engine with 2 behaviors.
