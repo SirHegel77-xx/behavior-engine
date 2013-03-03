@@ -24,7 +24,7 @@ class behavior(threading.Thread):
         return self.__class__.__name__
 
 
-class echoBehavior(behavior, engine):
+class echoBehavior(behavior):
     def __init__(self, engine, frequency):
         behavior.__init__(self, engine)
         self.sleepDelay = 1 / frequency
