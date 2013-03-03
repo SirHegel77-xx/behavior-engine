@@ -2,8 +2,6 @@ import threading
 from time import sleep
 import signal
 
-
-
 class behavior(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -24,12 +22,11 @@ class behavior(threading.Thread):
         return self.__class__.__name__
 
 
-class blinkBehavior(behavior):
+class echoBehavior(behavior):
     def __init__(self, frequency):
         behavior.__init__(self)
         self.sleepDelay = 1 / frequency
             
-
     def takeControl(self):
         return True;
 
@@ -45,7 +42,6 @@ class behaviorEngine(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.behaviors = []
-        self.behaviors.append(blinkBehavior(1))
         self.currentBehavior = None
         self.shouldStop = False
         self.isRunning = False
@@ -58,8 +54,7 @@ class behaviorEngine(threading.Thread):
                 if self.currentBehavior != b:
                     if b.takeControl():
                         self.stopCurrent()
-                        self.currentBehavior = b
-                        print
+                        self.currentBehavior = b                        
                         b.startWork()
         self.stopCurrent()
         self.isRunning = False

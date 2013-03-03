@@ -6,7 +6,7 @@ class myBehaviorEngine(behaviorEngine):
         behaviorEngine.__init__(self)
         self.behaviors.append(blinkBehavior(1))
 
-def main(self):
+def main():
     be = myBehaviorEngine()
     try:
         print("Starting engine...")
@@ -19,3 +19,4 @@ def main(self):
         while be.isRunning:
             sleep(1)
         
+main()
