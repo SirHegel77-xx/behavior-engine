@@ -3,47 +3,62 @@ from time import sleep
 from BehaviorEngine import *
 import signal
 
-class behavior:
+# Base class for behaviors.
+class Behavior:
     def __init__(self, engine):        
-        self.shouldStop = False;
-        self.engine = engine
+        self._should_stop = False;
+        self._engine = engine
 
-    def isRunning(self):
-        if self.thread != None:
-            if self.thread.is_alive():
+    # Returns the hosting behavior engine.
+    def engine(self):
+        return self._engine
+
+    # Returns True if this behavior is currently running.
+    def is_running(self):
+        if self._thread != None:
+            if self._thread.is_alive():
                 return True
         return False
-        
-    def takeControl(self):
+    
+    # Returns True if this behavior should take control.
+    def take_control(self):
         return False;
 
-    def startWork(self):
-        print(self.typeName() + " starting work")        
-        self.thread = Thread(target = self.run)
-        self.thread.start()
+    # Returns True if this behavior should stop.
+    def should_stop(self):
+        return self._should_stop
 
-    def stopWork(self):
-        self.shouldStop = True
-	self.thread.join()
-        self.thread = None	
-        self.shouldStop = False
+    # Starts this behavior. A new thread is started
+    # to do actual work.
+    def start(self):        
+        self._thread = Thread(target = self.run)
+        self._thread.start()
 
-    def typeName(self):
+    # Stops this behavior and waits for the thread to end.
+    def stop(self):
+        self._should_stop = True
+	self._thread.join()
+        self._thread = None	
+        self._should_stop = False
+
+    # Returns the typename of this behavior for debuggin purposes.
+    def get_type_name(self):
         return self.__class__.__name__
 
-
-class idleBehavior(behavior):
+# Implements behavior, which does nothing.
+class IdleBehavior(Behavior):
     def __init__(self, engine):
-        behavior.__init__(self, engine)        
+        Behavior.__init__(self, engine)        
             
-    def takeControl(self):
-        if self.engine.currentBehavior == None:
+    # Takes control only if no other behavior is running.
+    def take_control(self):
+        if self.engine().current_behavior() == None:
             return True
         return False
 
-    def run(self):
-        print("Starting to idle...")
-        while self.shouldStop == False:            
+    # Runs until requested to stop.
+    def run(self):      
+        while self.should_stop() == False:            
             sleep(0.1)
         
 
