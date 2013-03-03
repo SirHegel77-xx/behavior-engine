@@ -24,7 +24,7 @@ class behavior(threading.Thread):
         return self.__class__.__name__
 
 
-class idleBehavior(behavior, engine):
+class idleBehavior(behavior):
     def __init__(self, engine):
         behavior.__init__(self, engine)        
             
