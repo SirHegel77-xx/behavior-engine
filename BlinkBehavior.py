@@ -1,5 +1,5 @@
 from Behavior import *
-from quick2wire.gpio import pins, Out
+from quick2wire.gpio import pins, In, Out
 
 
 class blinkBehavior(behavior):
@@ -8,12 +8,17 @@ class blinkBehavior(behavior):
         self.sleepDelay = 1 / frequency            
 
     def takeControl(self):
-        return True;
+        with pins.pin(7, direction=In) as pin:
+            if pin.value == 1 return True
+        return False
 
     def run(self):
+        print("Starting to blink...")
         self.isRunning = True
-        with pins.pin(0, direction=Out) as pin:
-            while self.shouldStop == False:
+        inPin = pins.pin(7, direction=In)
+        outPin = pins.pin(0, direction=Out)
+        with inPin, outPin:
+            while inPin == True && self.shouldStop == False:
                 pin.value = pin.value - 1
                 sleep(self.sleepDelay)
             self.isRunning = False

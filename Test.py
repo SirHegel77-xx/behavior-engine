@@ -5,6 +5,7 @@ class myBehaviorEngine(behaviorEngine):
     def __init__(self):
         behaviorEngine.__init__(self)
         self.behaviors.append(blinkBehavior(self, 1))
+        self.behaviors.append(idleBehavior())
 
 def main():
     be = myBehaviorEngine()

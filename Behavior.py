@@ -24,20 +24,19 @@ class behavior(threading.Thread):
         return self.__class__.__name__
 
 
-class echoBehavior(behavior, engine):
-    def __init__(self, engine, frequency):
-        behavior.__init__(self, engine)
-        self.sleepDelay = 1 / frequency
+class idleBehavior(behavior, engine):
+    def __init__(self, engine):
+        behavior.__init__(self, engine)        
             
     def takeControl(self):
         return True;
 
     def run(self):
         self.isRunning = True
-        while self.shouldStop == False:
-            print("Blink!")
+        print("Starting to idle...")
+        while self.shouldStop == False:            
             sleep(self.sleepDelay)
-        self.isRunning = False
+        self.isRunning = False        
         
 
 
