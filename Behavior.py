@@ -3,61 +3,79 @@ from time import sleep
 from BehaviorEngine import *
 import signal
 
-# Base class for behaviors.
 class Behavior:
+    """ Base class for behaviors. """
     def __init__(self, engine):        
         self._should_stop = False;
         self._engine = engine
 
-    # Returns the hosting behavior engine.
     def engine(self):
+        """ Returns the hosting behavior engine. """
         return self._engine
 
-    # Returns True if this behavior is currently running.
     def is_running(self):
+        """ Returns True if this behavior is currently running. """
         if self._thread != None:
             if self._thread.is_alive():
                 return True
         return False
     
-    # Returns True if this behavior should take control.
     def take_control(self):
+        """ 
+        Returns True if this behavior should take control.
+        The engine calls this method for each behavior
+        to check if some of the behaviors would like to 
+        take control. Inheriting classes should implement
+        this method to determine when the behavior should start.
+        """
         return False;
 
-    # Returns True if this behavior should stop.
     def should_stop(self):
+        """ 
+        Returns True if this behavior should stop.
+        The behavior implementation should call this function
+        in the behavior loop and return as soon as possible
+        if should_stop returns True. By default this function
+        returns True if stop() method has been called. 
+        Inheriting classes can override this method if some
+        other logic is requred. However, _should_stop value
+        should always be obeyed.
+        """
         return self._should_stop
 
-    # Starts this behavior. A new thread is started
-    # to do actual work.
-    def start(self):        
+    def start(self):
+        """ 
+        Starts this behavior. A new thread is started
+        to run the behavior code. Inheriting classes should 
+        implement run() method to do actual work.
+        """
         self._thread = Thread(target = self.run)
         self._thread.start()
 
-    # Stops this behavior and waits for the thread to end.
     def stop(self):
+        """  Stops this behavior and waits for the thread to end. """
         self._should_stop = True
 	self._thread.join()
         self._thread = None	
         self._should_stop = False
 
-    # Returns the typename of this behavior for debuggin purposes.
     def get_type_name(self):
+        """  Returns the typename of this behavior for debuggin purposes.  """
         return self.__class__.__name__
 
-# Implements behavior, which does nothing.
 class IdleBehavior(Behavior):
+    """  Implements behavior, which does nothing. """
     def __init__(self, engine):
         Behavior.__init__(self, engine)        
             
-    # Takes control only if no other behavior is running.
     def take_control(self):
+        """ Takes control only if no other behavior is running. """
         if self.engine().current_behavior() == None:
             return True
         return False
 
-    # Runs until requested to stop.
     def run(self):      
+        """ Runs until requested to stop. """
         while self.should_stop() == False:            
             sleep(0.1)
         

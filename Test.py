@@ -4,18 +4,23 @@ import curses
 from time import sleep
 from quick2wire.gpio import pins, In
 
-# Sample behavior implementation
 class MyBehavior(BlinkBehavior):
+    """
+    Sample behavior implementation. Behavior starts
+    and stops when rising edge of an input pin is detected.
+    """
     def __init__(self, engine):
         BlinkBehavior.__init__(self, engine, 0, 1)
         # Variables for detecting rising edges
         self._can_take_control = False
         self._can_stop = False
 
-    # Custom implementation of takeControl method.
-    # Takes control if the current behavior is idleBehavior
-    # and the rising edge of input pin is detected.
     def take_control(self):
+        """
+        Custom implementation of take_control method.
+        Takes control if the current behavior is IdleBehavior
+        and the rising edge of input pin is detected.
+        """
         result = False
         if isinstance(self.engine().current_behavior(), IdleBehavior):
             with pins.pin(7, direction=In) as pin:
@@ -26,9 +31,12 @@ class MyBehavior(BlinkBehavior):
                     result = True
         return result
 
-    # Custom implementation of shouldStop method.
-    # Stops the behavior if rising edge of input pin is detected.
     def should_stop(self):
+        """
+        Custom implementation of should_stop method.
+        Stops the behavior if stop() method is called
+        or if rising edge of input pin is detected.
+        """
         result = Behavior.should_stop(self)
         if result == True: 
             return True
@@ -40,15 +48,15 @@ class MyBehavior(BlinkBehavior):
                 self._can_stop == False
         return result
 
-# Custom behavior engine with 2 behaviors.
 class MyBehaviorEngine(BehaviorEngine):
+    """ Custom behavior engine with 2 behaviors. """
     def __init__(self):
         BehaviorEngine.__init__(self)
         self.add_behavior(MyBehavior(self))
         self.add_behavior(IdleBehavior(self))
 
-# Initializes curses and starts the behavior engine.
 def main():
+    """ Initializes curses and starts the behavior engine. """
     stdscr = curses.initscr()
     stdscr.keypad(1)
     curses.noecho()
